@@ -1,13 +1,16 @@
 var path = require('path');
+var HtmlwebpackPlugin = require('html-webpack-plugin');
 var webpack = require('webpack');
 var merge = require('webpack-merge');
-var HtmlwebpackPlugin = require('html-webpack-plugin');
 
 var TARGET = process.env.npm_lifecycle_event;
 var ROOT_PATH = path.resolve(__dirname);
 
 var common = {
-  entry: path.resolve(ROOT_PATH, 'app/main'),
+  entry: path.resolve(ROOT_PATH, 'app'),
+  resolve: {
+    extensions: ['', '.js', '.jsx']
+  },
   output: {
     path: path.resolve(ROOT_PATH, 'build'),
     filename: 'bundle.js'
@@ -28,9 +31,18 @@ var common = {
   ]
 };
 
-if (TARGET === 'start' || !TARGET) {
+if(TARGET === 'start' || !TARGET) {
   module.exports = merge(common, {
-    devTool: 'eval-source-map',
+    devtool: 'eval-source-map',
+    module: {
+      loaders: [
+        {
+          test: /\.jsx?$/,
+          loaders: ['babel'],
+          include: path.resolve(ROOT_PATH, 'app')
+        }
+      ]
+    },
     devServer: {
       historyApiFallback: true,
       hot: true,
